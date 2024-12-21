@@ -10,7 +10,7 @@ cd Hziee-Srun-Py3
 python login_nonrequirement
 ~~~
 only tested on Python 3.10.9
-## Credit
+## Reference
 
 [coffeehat/BIT-srun-login-script](https://github.com/coffeehat/BIT-srun-login-script)
 
