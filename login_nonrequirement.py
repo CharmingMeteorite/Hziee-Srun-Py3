@@ -1,6 +1,6 @@
 # login_with_nothing.py
 import json, re, os, sys, math, hashlib, hmac, http.client, ssl
-import urllib.parse
+import urllib.parse, urllib.request
 
 _PADCHAR = "="
 _ALPHA = "LVoJPiCN2R8G90yg+hmFHuacZ1OWMnrsSTXkYpUq/3dlbfKwv6xztjI7DeBE45QA"
@@ -11,19 +11,57 @@ n = 200
 type_num = 1
 header = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.26 Safari/537.36'}
+ac_id = ''
+ip = ''
+username = ''
 
 
 def readConfig():
-    global loginInfo, header, device, os, ac_id, ip, host, port
+    global loginInfo, header, device, os, host, port ,username
     configFile = open(os.path.join(os.path.dirname(sys.argv[0]), 'config.json'))
     configInfo = json.loads(str(configFile.read()))
     loginInfo = configInfo['userInfo']
-    ip = configInfo['netInfo']['ip']
-    ac_id = configInfo['netInfo']['ac_id']
+    username = configInfo['userInfo']['username']
     host = host
     port = port
     device = 'Windows'
     os = 'Windows'
+
+
+def getAc_id():
+    global ac_id
+    # 打开URL
+    response = urllib.request.urlopen('http://' + host)
+
+    # 读取并解码为字符串
+    html = response.read().decode('utf-8')
+
+    # 使用正则表达式提取ac_id
+    match = re.search(r"ac_id=(\d+)", html)
+    ac_id = match.group(1)
+    print(ac_id)
+
+
+def getIp():
+    global ip
+    response = urllib.request.urlopen(
+        'http://' + host
+        + "/cgi-bin/get_challenge?callback="
+        + "jQuery112400496191401220758_1730443914031"
+        + "&username="
+        + username
+    )
+    html = response.read()
+    html_str = html.decode('utf-8')
+
+    match = re.search(r'"client_ip":"([^"]+)"', html_str)
+    if match:
+        ip = match.group(1)
+        print(ip)
+        return ip
+    else:
+        print("IP not found.")
+        return None
 
 
 def getInfo():
@@ -300,6 +338,8 @@ def login():
 
 def main():
     readConfig()
+    getAc_id()
+    getIp()
     getInfo()
     login()
 
