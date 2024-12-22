@@ -2,9 +2,5 @@
   "userInfo": {
     "username": "your account",
     "password": "your password"
-  },
-  "netInfo": {
-    "ac_id": "acid",
-    "ip": "ip"
   }
 }
